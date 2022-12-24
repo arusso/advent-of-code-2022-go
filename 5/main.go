@@ -111,11 +111,14 @@ func (s Ship) Move(num, from, to int) {
 		panic(fmt.Sprintf("stack not large enough, %d < %d", s[realFrom].Len(), num))
 	}
 
+	mov := &list.List{}
+
 	for i := 0; i < num; i++ {
 		elem := s[realFrom].Front()
-		s[realTo].PushFront(elem.Value)
+		mov.PushBack(elem.Value)
 		s[realFrom].Remove(elem)
 	}
+	s[realTo].PushFrontList(mov)
 }
 
 func parseContainerLine(line string) map[int]byte {
