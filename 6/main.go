@@ -13,18 +13,17 @@ func main() {
 
 	// input is a single line
 	scan.Scan()
-	fmt.Println(startOfPacket(scan.Text()))
+	fmt.Println(startOfMessage(scan.Text()))
 }
 
 const StartOfPacketLength = 4
+const StartOfMessageLength = 14
 
-// startOfPacket marker looks for the first four unique characters, returning
-// the index of the last character of the marker.
-func startOfPacket(str string) int {
-	for i := StartOfPacketLength - 1; i < len(str); i++ {
+func afterUnique(str string, uniq int) int {
+	for i := uniq - 1; i < len(str); i++ {
 		duplicate := false
 		counts := map[byte]int{}
-		for j := 0; j < StartOfPacketLength; j++ {
+		for j := 0; j < uniq; j++ {
 			counts[str[i-j]]++
 		}
 
@@ -43,4 +42,12 @@ func startOfPacket(str string) int {
 	}
 
 	return -1
+}
+
+func startOfPacket(str string) int {
+	return afterUnique(str, StartOfPacketLength)
+}
+
+func startOfMessage(str string) int {
+	return afterUnique(str, StartOfMessageLength)
 }
