@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	smallDirectoryLimit = 100000
+	smallDirectoryLimit    = 100000
+	updateSpaceRequirement = 30000000
+	diskSize               = 70000000
 )
 
 var files = map[string]int{}
@@ -72,5 +74,26 @@ func main() {
 		}
 	}
 
-	fmt.Println("size: " + strconv.Itoa(dirSizes))
+	free := diskSize - dirs["/"]
+	fmt.Printf("disk size: %d\n", diskSize)
+	fmt.Printf("space free: %d\n", free)
+	fmt.Printf("space used: %d\n", dirs["/"])
+
+	needed := (free - updateSpaceRequirement) * -1
+	if needed < 0 {
+		fmt.Println("we have enough space for the update")
+		os.Exit(0)
+	}
+
+	fmt.Printf("space needed: %d\n", needed)
+	smallestDir := "/"
+	for dir, size := range dirs {
+		//fmt.Printf(" -> inspecting dir of size %d\n", size)
+		if size < dirs[smallestDir] && size >= needed {
+			smallestDir = dir
+		}
+	}
+
+	fmt.Println("found dir: " + smallestDir)
+	fmt.Println("space freed: " + strconv.Itoa(dirs[smallestDir]))
 }
