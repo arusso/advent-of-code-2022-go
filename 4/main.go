@@ -17,7 +17,7 @@ func main() {
 	for scan.Scan() {
 		line := scan.Text()
 		r1, r2 := GetRanges(line)
-		if r1.Contains(r2) || r2.Contains(r1) {
+		if r1.Overlaps(r2) || r2.Overlaps(r1) {
 			totalOverlaps++
 		}
 	}
@@ -38,6 +38,10 @@ type Range struct {
 
 func (r Range) Contains(o Range) bool {
 	return o.Start >= r.Start && o.End <= r.End
+}
+
+func (r Range) Overlaps(o Range) bool {
+	return (o.Start >= r.Start && o.Start <= r.End) || (o.End <= r.End && o.End >= r.Start)
 }
 
 func NewRange(in string) Range {
